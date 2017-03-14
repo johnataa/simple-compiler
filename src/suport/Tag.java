@@ -12,9 +12,9 @@ package suport;
  */
 public class Tag {
     public static final String
-        ID = "Identificador",
-        SS = "Simbolo simples",
-        ATRIBUICAO = "Simbolo de atribuição",
-        OPERADOR = "Operador de soma (+)",
-        RESERVED_WORD = "Palavra reservada";
+        ID = "Identifier",
+        SS = "Simple symbol",
+        ATTRIBUTION = "Attribution symbol",
+        OPERATOR = "Sum operator (+)",
+        RESERVED_WORD = "Reserved word";
 }

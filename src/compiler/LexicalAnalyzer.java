@@ -16,11 +16,11 @@ import suport.Token;
  * @author Johnata Rodrigo and Iago Bachega
  */
 public class LexicalAnalyzer {
-    public static Queue<Token> tokens;
+    private static Queue<Token> tokens;
     private static Queue<Character> text;
     private static Character peek;
     
-    public static void scanString(String str ){
+    public static void scanString(String str){
         if (text == null){
             text = parseToCharQueue(str);
         } else if (tokens != null){
@@ -50,7 +50,7 @@ public class LexicalAnalyzer {
             
             switch (peek) {
                 case '+':
-                    t = new Token("+", Tag.OPERADOR, linha);
+                    t = new Token("+", Tag.OPERATOR, linha);
                     tokens.add(t);
                     break;
                 case ',':
@@ -59,7 +59,7 @@ public class LexicalAnalyzer {
                     break;
                 case ':':
                     if (nextChar('=')){
-                        t = new Token(":=", Tag.ATRIBUICAO, linha);
+                        t = new Token(":=", Tag.ATTRIBUTION, linha);
                         nextChar();
                     } else {
                        t = new Token(":", Tag.SS, linha);
@@ -82,6 +82,7 @@ public class LexicalAnalyzer {
                 lex.append(peek);
                 nextChar();
             }while(peek != null && Character.isLetter(peek));
+            
             String lexema = lex.toString();
             t = findToken(lexema, linha);
             if (t == null){
@@ -92,10 +93,17 @@ public class LexicalAnalyzer {
     }
     
     public static Token getNextToken() {
-        if (tokens != null){
+        if (tokens != null && !tokens.isEmpty()){
             return tokens.poll();
         }
-        return null;        
+        return null;
+    }
+    
+    public static boolean nextTokenIs(String token) {
+        if (tokens != null && !tokens.isEmpty()){
+            return tokens.peek().getLexeme().equals(token);
+        }
+        return false;        
     }
     
     

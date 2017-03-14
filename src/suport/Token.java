@@ -20,6 +20,14 @@ public class Token {
         this.tag = tag;        
         this.coodinate = coodinate;
     }
+
+    public String getLexeme() {
+        return lexeme;
+    }
+
+    public String getTag() {
+        return tag;
+    }
     
     public int getCoodinate() {
         return coodinate;
@@ -33,5 +41,5 @@ public class Token {
     public String toString() {
         return "Lexeme: " + this.lexeme + "\nTag: " + this.tag + "\nLine: " + this.coodinate + "\n"; 
     }
-    
+
 }

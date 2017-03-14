@@ -6,6 +6,8 @@
 package tests;
 
 import compiler.LexicalAnalyzer;
+import compiler.SyntacticAnalyzer;
+import suport.Token;
 
 
 /**
@@ -19,12 +21,12 @@ public class Main {
      */
     public static void main(String[] args) {
      
-        String conteudo = "var\n\ta,b,c:integer;\n\td:real\nif a+b then a:=c";
+        String conteudo = "var\n\ta,b,c:integer;\n\td:real\nif a + b then a:=c";
         LexicalAnalyzer.scanString(conteudo);
+         
+        SyntacticAnalyzer sa = new SyntacticAnalyzer();
         
-        while(!LexicalAnalyzer.tokens.isEmpty()){
-            System.out.println(LexicalAnalyzer.getNextToken());
-        }
+        sa.execute();
         
         
     }
