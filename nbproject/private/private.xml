@@ -4,6 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/johnata/NetBeansProjects/simple-compiler.git/src/tests/Main.java</file>
+            <file>file:/home/johnata/NetBeansProjects/simple-compiler.git/src/compiler/SyntacticAnalyzer.java</file>
+            <file>file:/home/johnata/NetBeansProjects/simple-compiler.git/src/suport/Symbol.java</file>
+            <file>file:/home/johnata/NetBeansProjects/simple-compiler.git/src/compiler/LexicalAnalyzer.java</file>
+            <file>file:/home/johnata/NetBeansProjects/simple-compiler.git/src/compiler/SymbolTable.java</file>
         </group>
     </open-files>
 </project-private>
