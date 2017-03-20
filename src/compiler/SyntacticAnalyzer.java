@@ -116,9 +116,9 @@ public class SyntacticAnalyzer {
         Symbol s = null;
         if (currentToken.getTag().equals(Tag.ID)){
             
-            currentToken = LexicalAnalyzer.getNextToken();
-            
             s = symbolTable.search(currentToken.getLexeme()+Symbol.VARIABLE);
+            
+            currentToken = LexicalAnalyzer.getNextToken();
 
             if((s != null) && s.getCategoria().equals(Symbol.VARIABLE)){
                 if (currentToken.getLexeme().equals(":=")){
