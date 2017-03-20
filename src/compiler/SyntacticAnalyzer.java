@@ -5,6 +5,8 @@
  */
 package compiler;
 
+import java.util.List;
+import suport.Symbol;
 import suport.Tag;
 import suport.Token;
 
@@ -15,6 +17,8 @@ import suport.Token;
 public class SyntacticAnalyzer {
     private Token currentToken;
     private boolean error;
+    private SymbolTable symbolTable = new SymbolTable();
+    private List<Token> tokenList;
 
     public SyntacticAnalyzer() {
         this.error = false;
@@ -55,6 +59,7 @@ public class SyntacticAnalyzer {
     private void L() {
         currentToken = LexicalAnalyzer.getNextToken();
         if (currentToken.getTag().equals(Tag.ID)){
+            tokenList.add(currentToken);
             X();
         } else {
             error("id");
@@ -65,6 +70,16 @@ public class SyntacticAnalyzer {
         currentToken = LexicalAnalyzer.getNextToken();
         if (!(currentToken.getLexeme().equals("integer") || currentToken.getLexeme().equals("real"))){
             error("integer OR real");
+        }else{
+            for (Token t : tokenList) {
+                Symbol s = new Symbol(t, Symbol.VARIABLE, currentToken.getLexeme());
+                if(!symbolTable.equals(s)){
+                    symbolTable.insert(s);
+                }else{
+                    System.err.println("Already contains " + t.getLexeme() + " in symbol table!");
+                }
+            }
+            tokenList.clear();
         }
     }
     
@@ -84,15 +99,25 @@ public class SyntacticAnalyzer {
     
     private void S(){
         currentToken = LexicalAnalyzer.getNextToken();
+        Symbol s = null;
         if (currentToken.getTag().equals(Tag.ID)){
+            
             currentToken = LexicalAnalyzer.getNextToken();
-            if (currentToken.getLexeme().equals(":=")){
-                E();
-            }else {
-                error(":=");
+            
+            s = symbolTable.search(currentToken.getLexeme());
+
+            if((s != null) && s.getCategoria().equals(Symbol.VARIABLE)){
+                if (currentToken.getLexeme().equals(":=")){
+                    E(s);
+
+                }else {
+                    error(":=");
+                }
+            }else{
+                System.err.println("Doesn't contain " + currentToken.getLexeme() + " in symbol table!");
             }
         } else if (currentToken.getLexeme().equals("if")){
-            E();
+            E(s);
             currentToken = LexicalAnalyzer.getNextToken();
             if (currentToken.getLexeme().equals("then")){
                 S();
@@ -104,23 +129,38 @@ public class SyntacticAnalyzer {
         }
     }
     
-    private void E(){
-        T();
-        R();
+    private void E(Symbol s){
+        Symbol s2 = T(s);
+        R(s2);
+        
     }
     
-    private void T(){
+    private Symbol T(Symbol s){
         currentToken = LexicalAnalyzer.getNextToken();
         if (!currentToken.getTag().equals(Tag.ID)){
             error("id");
-        }
+            return null;
+        }else{
+            Symbol saux = symbolTable.search(currentToken.getLexeme());
+            if(s != null){
+                if(s.getTipo().equals(saux.getTipo())){
+                    return saux;
+                }else{
+                    System.err.println("Type of variables must be equal!");
+                    return null;
+                }
+            }else{
+                 return saux;
+            }
+        } 
     }
     
-    private void R(){
+    private void R(Symbol s){
         if (LexicalAnalyzer.nextTokenIs("+")){
             currentToken = LexicalAnalyzer.getNextToken();
-            T();
-            R();
+            Symbol s2 = T(s);
+            R(s2);
+            
         }
     }
     
