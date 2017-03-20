@@ -5,7 +5,10 @@
  */
 package compiler;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import suport.Quadruple;
 import suport.Symbol;
 import suport.Tag;
 import suport.Token;
@@ -17,17 +20,28 @@ import suport.Token;
 public class SyntacticAnalyzer {
     private Token currentToken;
     private boolean error;
-    private SymbolTable symbolTable = new SymbolTable();
+    private int prox;
+    private int temp;
+    private SymbolTable symbolTable;
     private List<Token> tokenList;
+    private List<Quadruple> quadrupleList;
 
     public SyntacticAnalyzer() {
         this.error = false;
+        this.symbolTable = new SymbolTable();
+        this.quadrupleList = new ArrayList<>();
+        this.tokenList = new ArrayList<>();
+        this.prox = 1;
+        this.temp = 1;
     }
     
     public void execute(){
         A();
         if (!error){
-            System.out.println("It's done!");
+            Collections.sort(quadrupleList);
+            for (Quadruple quadruple : quadrupleList) {
+                System.out.println(quadruple);
+            }
         }
     }
     
@@ -104,12 +118,13 @@ public class SyntacticAnalyzer {
             
             currentToken = LexicalAnalyzer.getNextToken();
             
-            s = symbolTable.search(currentToken.getLexeme());
+            s = symbolTable.search(currentToken.getLexeme()+Symbol.VARIABLE);
 
             if((s != null) && s.getCategoria().equals(Symbol.VARIABLE)){
                 if (currentToken.getLexeme().equals(":=")){
-                    E(s);
-
+                    Symbol Edir = E(s);
+                    Quadruple q = new Quadruple(this.prox++, ":=", Edir.toString(), "", s.toString());
+                    quadrupleList.add(q);
                 }else {
                     error(":=");
                 }
@@ -117,10 +132,13 @@ public class SyntacticAnalyzer {
                 System.err.println("Doesn't contain " + currentToken.getLexeme() + " in symbol table!");
             }
         } else if (currentToken.getLexeme().equals("if")){
-            E(s);
+            Symbol Edir = E(s);
             currentToken = LexicalAnalyzer.getNextToken();
             if (currentToken.getLexeme().equals("then")){
+                int quad = this.prox++;
                 S();
+                Quadruple q = new Quadruple(quad, "JF", Edir.toString() , "" + this.prox, "");
+                quadrupleList.add(q);
             } else {
                 error("then");
             }
@@ -129,10 +147,11 @@ public class SyntacticAnalyzer {
         }
     }
     
-    private void E(Symbol s){
-        Symbol s2 = T(s);
-        R(s2);
+    private Symbol E(Symbol Eesq){
+        Symbol Tdir = T(Eesq);
+        Symbol Rdir = R(Tdir);
         
+        return Rdir;        
     }
     
     private Symbol T(Symbol s){
@@ -141,7 +160,7 @@ public class SyntacticAnalyzer {
             error("id");
             return null;
         }else{
-            Symbol saux = symbolTable.search(currentToken.getLexeme());
+            Symbol saux = symbolTable.search(currentToken.getLexeme()+Symbol.VARIABLE);
             if(s != null){
                 if(s.getTipo().equals(saux.getTipo())){
                     return saux;
@@ -150,18 +169,31 @@ public class SyntacticAnalyzer {
                     return null;
                 }
             }else{
-                 return saux;
+                return saux;
             }
         } 
     }
     
-    private void R(Symbol s){
+    private Symbol R(Symbol Resq){
         if (LexicalAnalyzer.nextTokenIs("+")){
             currentToken = LexicalAnalyzer.getNextToken();
-            Symbol s2 = T(s);
-            R(s2);
+            Symbol R1esq = T(Resq);
+            Symbol R1dir = R(R1esq);
+            Symbol Rdir = geratemp();
             
+            Quadruple q = new Quadruple(this.prox++, "+", Resq.toString(), R1dir.toString(), Rdir.toString());
+            quadrupleList.add(q);
+            
+            return Rdir;
+            
+        } else {
+            return Resq;
         }
+    }
+    
+    private Symbol geratemp(){
+        Symbol b = new Symbol("t" + this.temp++);
+        return b;        
     }
     
     private void error(String expected){

@@ -23,13 +23,14 @@ public class Symbol {
         this.categoria = categoria;
         this.tipo = tipo;
     }
+    
+    public Symbol(String geratemp){
+        this.tipo = geratemp;
+        this.token = null;
+    }
 
     public String getId() {
         return id;
-    }
-    
-    public String getLexeme(){
-        return this.token.getLexeme();
     }
     
     public Token getToken() {
@@ -61,4 +62,12 @@ public class Symbol {
         Symbol s = (Symbol) obj;
         return this.id.equals(s.getId());
     }
+
+    @Override
+    public String toString() {
+        if (this.token != null){
+            return this.token.getLexeme();
+        }
+        return this.tipo;
+    }    
 }
