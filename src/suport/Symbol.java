@@ -12,6 +12,7 @@ package suport;
 public class Symbol {
     public static final String VARIABLE = "variable";
     public static final String PROCEDURE = "procedure";
+    public static final String EMPTY = "-";
     private String id;
     private Token token;
     private String categoria;

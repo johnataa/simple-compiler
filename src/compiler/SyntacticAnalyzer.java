@@ -123,7 +123,7 @@ public class SyntacticAnalyzer {
             if((s != null) && s.getCategoria().equals(Symbol.VARIABLE)){
                 if (currentToken.getLexeme().equals(":=")){
                     Symbol Edir = E(s);
-                    Quadruple q = new Quadruple(this.prox++, ":=", Edir.toString(), "", s.toString());
+                    Quadruple q = new Quadruple(this.prox++, ":=", Edir.toString(), Symbol.EMPTY, s.toString());
                     quadrupleList.add(q);
                 }else {
                     error(":=");
@@ -137,7 +137,7 @@ public class SyntacticAnalyzer {
             if (currentToken.getLexeme().equals("then")){
                 int quad = this.prox++;
                 S();
-                Quadruple q = new Quadruple(quad, "JF", Edir.toString() , "" + this.prox, "");
+                Quadruple q = new Quadruple(quad, "JF", Edir.toString() , "" + this.prox, Symbol.EMPTY);
                 quadrupleList.add(q);
             } else {
                 error("then");
