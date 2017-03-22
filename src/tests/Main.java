@@ -22,13 +22,11 @@ public class Main {
     public static void main(String[] args) {
      
         String conteudo = "var\n\ta,b,c:integer;\n\td:real\nif a + b then a:=c";
-        LexicalAnalyzer.scanString(conteudo);
-         
-        SyntacticAnalyzer sa = new SyntacticAnalyzer();
-        
-        sa.execute();
-        
-        
+//        String conteudo = "";
+        if (LexicalAnalyzer.scanString(conteudo)){
+            SyntacticAnalyzer sa = new SyntacticAnalyzer();
+            sa.execute();
+        }
     }
     
 }

@@ -90,6 +90,7 @@ public class SyntacticAnalyzer {
                 if(!symbolTable.equals(s)){
                     symbolTable.insert(s);
                 }else{
+                    this.error = true;
                     System.err.println("Already contains " + t.getLexeme() + " in symbol table!");
                 }
             }
@@ -118,18 +119,20 @@ public class SyntacticAnalyzer {
             
             s = symbolTable.search(currentToken.getLexeme()+Symbol.VARIABLE);
             
-            currentToken = LexicalAnalyzer.getNextToken();
-
             if((s != null) && s.getCategoria().equals(Symbol.VARIABLE)){
+                currentToken = LexicalAnalyzer.getNextToken();
                 if (currentToken.getLexeme().equals(":=")){
                     Symbol Edir = E(s);
-                    Quadruple q = new Quadruple(this.prox++, ":=", Edir.toString(), Symbol.EMPTY, s.toString());
-                    quadrupleList.add(q);
+                    if (!error){
+                        Quadruple q = new Quadruple(this.prox++, ":=", Edir.toString(), Symbol.EMPTY, s.toString());
+                        quadrupleList.add(q);
+                    }
                 }else {
                     error(":=");
                 }
             }else{
-                System.err.println("Doesn't contain " + currentToken.getLexeme() + " in symbol table!");
+                this.error = true;
+                System.err.println("Doesn't contain '" + currentToken.getLexeme() + "' in symbol table!");
             }
         } else if (currentToken.getLexeme().equals("if")){
             Symbol Edir = E(s);
@@ -137,8 +140,10 @@ public class SyntacticAnalyzer {
             if (currentToken.getLexeme().equals("then")){
                 int quad = this.prox++;
                 S();
-                Quadruple q = new Quadruple(quad, "JF", Edir.toString() , "" + this.prox, Symbol.EMPTY);
-                quadrupleList.add(q);
+                if (!error){
+                    Quadruple q = new Quadruple(quad, "JF", Edir.toString() , "" + this.prox, Symbol.EMPTY);
+                    quadrupleList.add(q);
+                }
             } else {
                 error("then");
             }
@@ -161,15 +166,22 @@ public class SyntacticAnalyzer {
             return null;
         }else{
             Symbol saux = symbolTable.search(currentToken.getLexeme()+Symbol.VARIABLE);
-            if(s != null){
-                if(s.getTipo().equals(saux.getTipo())){
-                    return saux;
+            if (saux != null){
+                if(s != null){
+                    if(s.getTipo().equals(saux.getTipo())){
+                        return saux;
+                    }else{
+                        this.error = true;
+                        System.err.println("Type of variables must be equal!");
+                        return null;
+                    }
                 }else{
-                    System.err.println("Type of variables must be equal!");
-                    return null;
+                    return saux;
                 }
-            }else{
-                return saux;
+            } else {
+                this.error = true;
+                System.err.println("Doesn't contain '" + currentToken.getLexeme() + "' in symbol table!");
+                return null;
             }
         } 
     }
@@ -181,11 +193,11 @@ public class SyntacticAnalyzer {
             Symbol R1dir = R(R1esq);
             Symbol Rdir = geratemp();
             
-            Quadruple q = new Quadruple(this.prox++, "+", Resq.toString(), R1dir.toString(), Rdir.toString());
-            quadrupleList.add(q);
-            
+            if (!error){
+                Quadruple q = new Quadruple(this.prox++, "+", Resq.toString(), R1dir.toString(), Rdir.toString());
+                quadrupleList.add(q);
+            }            
             return Rdir;
-            
         } else {
             return Resq;
         }

@@ -20,16 +20,20 @@ public class LexicalAnalyzer {
     private static Queue<Character> text;
     private static Character peek;
     
-    public static void scanString(String str){
+    public static boolean scanString(String str){
+        if (str == null || str.equals("")){
+            System.err.println("String not found!");
+            return false;
+        }
         if (text == null){
             text = parseToCharQueue(str);
         } else if (tokens != null){
             if (tokens.isEmpty()){
                 text = parseToCharQueue(str);
             } else {
-                System.out.println("String para analise já está configurada e ainda há tokens para ser lido.");
-                System.out.println("Impossível realizar esta ação!");
-                return;
+                System.err.println("String para analise já está configurada e ainda há tokens para ser lido.");
+                System.err.println("Impossível realizar esta ação!");
+                return false;
             }
         }
         
@@ -90,6 +94,7 @@ public class LexicalAnalyzer {
             }
             tokens.add(t);        
         } while(peek != null);
+        return true;
     }
     
     public static Token getNextToken() {
