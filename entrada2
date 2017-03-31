@@ -1,0 +1,8 @@
+var
+    a,b,c,d : integer;
+    e, f    : real
+if a + b then
+    if c + d then
+        if e + f then
+            if a + d then
+                a := c + b + d + f
