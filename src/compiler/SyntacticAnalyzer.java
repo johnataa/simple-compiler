@@ -73,7 +73,12 @@ public class SyntacticAnalyzer {
     private void L() {
         currentToken = LexicalAnalyzer.getNextToken();
         if (currentToken.getTag().equals(Tag.ID)){
-            tokenList.add(currentToken);
+            if (!tokenList.contains(currentToken)){
+                tokenList.add(currentToken);
+            } else {
+                this.error = true;
+                System.out.println("Already contains '" + currentToken.getLexeme() + "' in symbol table! L");
+            }
             X();
         } else {
             error("id");
@@ -87,11 +92,11 @@ public class SyntacticAnalyzer {
         }else{
             for (Token t : tokenList) {
                 Symbol s = new Symbol(t, Symbol.VARIABLE, currentToken.getLexeme());
-                if(!symbolTable.equals(s)){
+                if(symbolTable.search(s.getId()) == null){
                     symbolTable.insert(s);
                 }else{
                     this.error = true;
-                    System.err.println("Already contains " + t.getLexeme() + " in symbol table!");
+                    System.out.println("Already contains '" + t.getLexeme() + "' in symbol table! K");
                 }
             }
             tokenList.clear();
@@ -132,7 +137,7 @@ public class SyntacticAnalyzer {
                 }
             }else{
                 this.error = true;
-                System.err.println("Doesn't contain '" + currentToken.getLexeme() + "' in symbol table!");
+                System.out.println("Doesn't contain '" + currentToken.getLexeme() + "' in symbol table!");
             }
         } else if (currentToken.getLexeme().equals("if")){
             Symbol Edir = E(s);
@@ -172,7 +177,7 @@ public class SyntacticAnalyzer {
                         return saux;
                     }else{
                         this.error = true;
-                        System.err.println("Type of variables must be equal!");
+                        System.out.println("Type of variables '" + s.getToken().getLexeme() + "' and '" + saux.getToken().getLexeme() + "' must be equal!");
                         return null;
                     }
                 }else{
@@ -180,7 +185,7 @@ public class SyntacticAnalyzer {
                 }
             } else {
                 this.error = true;
-                System.err.println("Doesn't contain '" + currentToken.getLexeme() + "' in symbol table!");
+                System.out.println("Doesn't contain '" + currentToken.getLexeme() + "' in symbol table!");
                 return null;
             }
         } 
@@ -210,6 +215,6 @@ public class SyntacticAnalyzer {
     
     private void error(String expected){
         this.error = true;
-        System.err.println("Syntactic Error!\nExpected '" + expected + "'. Found:\n" + this.currentToken);
+        System.out.println("Syntactic Error!\nExpected '" + expected + "'. Found:\n" + this.currentToken);
     } 
 }

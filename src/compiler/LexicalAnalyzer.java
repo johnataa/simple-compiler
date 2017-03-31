@@ -44,7 +44,9 @@ public class LexicalAnalyzer {
         do {
             t = null;
             while(true){
-                if (peek == '\n'){
+                if (peek == null){
+                    return true;
+                } else if (peek == '\n'){
                     linha++;
                 } else if (peek != ' ' && peek != '\t') {
                     break;
